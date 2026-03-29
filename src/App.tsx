@@ -388,11 +388,19 @@ export default function App() {
             </div>
             <div className="flex items-baseline gap-2">
               <h1 className="text-2xl font-bold tracking-tight text-white">Smile<span className="text-orange-500">TV</span></h1>
-              <span className="text-lg font-medium text-slate-400">PH</span>
+              <span className="text-sm font-bold text-slate-500 uppercase tracking-widest">PH</span>
             </div>
           </div>
 
           <div className="flex items-center gap-4">
+            <button 
+              onClick={() => {
+                handleUrlLoad('https://iptv-org.github.io/iptv/countries/ph.m3u');
+              }}
+              className="hidden sm:flex items-center gap-2 px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs font-bold transition-all shadow-lg shadow-orange-600/20"
+            >
+              <Tv size={16} /> Ready IPTV
+            </button>
             <button 
               onClick={() => setShowSettings(true)}
               className="p-2 text-slate-400 hover:text-white transition-colors"
@@ -418,7 +426,49 @@ export default function App() {
 
         {/* Categories */}
         <div id="container-categories" className="flex gap-3 overflow-x-auto scrollbar-hide">
-          {categories.map(cat => (
+          {/* Preset Quick-Load Buttons */}
+          <button
+            onClick={() => {
+              setSelectedCategory('All');
+              setSearchQuery('');
+            }}
+            className={cn(
+              "px-6 py-2.5 rounded-xl whitespace-nowrap transition-all font-semibold border text-sm",
+              selectedCategory === 'All' && !searchQuery
+                ? "category-active" 
+                : "bg-[#1a1a1a] border-white/5 text-slate-400 hover:text-white"
+            )}
+          >
+            All
+          </button>
+
+          <button
+            onClick={() => {
+              handleUrlLoad('https://iptv-org.github.io/iptv/countries/ph.m3u');
+            }}
+            className="px-6 py-2.5 rounded-xl whitespace-nowrap transition-all font-bold border text-xs bg-[#1a1a1a] border-white/5 text-slate-400 hover:text-white hover:bg-[#252525]"
+          >
+            PH News
+          </button>
+
+          <button
+            onClick={() => {
+              handleUrlLoad('https://iptv-org.github.io/iptv/categories/news.m3u');
+            }}
+            className="px-6 py-2.5 rounded-xl whitespace-nowrap transition-all font-bold border text-xs bg-[#1a1a1a] border-white/5 text-slate-400 hover:text-white hover:bg-[#252525]"
+          >
+            English News
+          </button>
+
+          <button
+            onClick={() => setShowSettings(true)}
+            className="px-6 py-2.5 rounded-xl whitespace-nowrap transition-all font-bold border text-xs bg-[#1a1a1a] border-white/5 text-slate-400 hover:text-white hover:bg-[#252525]"
+          >
+            By Country
+          </button>
+
+          {/* Dynamic Categories from Playlist */}
+          {categories.filter(cat => cat !== 'All').map(cat => (
             <button
               id={`btn-category-${cat.toLowerCase().replace(/\s+/g, '-')}`}
               key={cat}
@@ -515,10 +565,16 @@ export default function App() {
         </div>
 
         {filteredChannels.length === 0 && (
-          <div className="text-center py-20 glass rounded-3xl border-dashed border-2 border-white/10">
+          <div className="text-center py-20 glass rounded-3xl border-dashed border-2 border-white/10 flex flex-col items-center">
             <Tv size={48} className="mx-auto mb-4 text-slate-600" />
             <h2 className="text-xl font-bold text-slate-400">No channels found</h2>
-            <p className="text-slate-500">Try uploading a playlist or changing filters</p>
+            <p className="text-slate-500 mb-6">Try uploading a playlist or use our ready-to-go setup</p>
+            <button 
+              onClick={() => handleUrlLoad('https://iptv-org.github.io/iptv/countries/ph.m3u')}
+              className="px-8 py-4 bg-orange-600 hover:bg-orange-700 text-white rounded-2xl font-bold transition-all shadow-xl shadow-orange-600/30 flex items-center gap-3"
+            >
+              <Tv size={24} /> 1-Click Ready IPTV
+            </button>
           </div>
         )}
       </main>
