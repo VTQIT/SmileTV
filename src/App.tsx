@@ -127,6 +127,7 @@ export default function App() {
 
   // --- Video Logic ---
   useEffect(() => {
+    let hls: Hls | null = null;
     if (currentChannel && videoRef.current) {
       const video = videoRef.current;
       const streamUrl = currentChannel.url;
@@ -136,7 +137,7 @@ export default function App() {
       }
 
       if (Hls.isSupported()) {
-        const hls = new Hls({
+        hls = new Hls({
           enableWorker: true,
           lowLatencyMode: true,
           backBufferLength: 90
@@ -151,13 +152,13 @@ export default function App() {
           if (data.fatal) {
             switch (data.type) {
               case Hls.ErrorTypes.NETWORK_ERROR:
-                hls.startLoad();
+                hls?.startLoad();
                 break;
               case Hls.ErrorTypes.MEDIA_ERROR:
-                hls.recoverMediaError();
+                hls?.recoverMediaError();
                 break;
               default:
-                hls.destroy();
+                hls?.destroy();
                 addToast("Stream error. Try another channel.", "error");
                 break;
             }
@@ -167,10 +168,15 @@ export default function App() {
         // Native Safari support
         video.src = streamUrl;
         video.addEventListener('loadedmetadata', () => {
-          video.play();
+          video.play().catch(() => {});
         });
       }
     }
+    return () => {
+      if (hls) {
+        hls.destroy();
+      }
+    };
   }, [currentChannel]);
 
   // --- Handlers ---
@@ -205,7 +211,8 @@ export default function App() {
       setUrlInput('');
       addToast(`Successfully loaded ${parsed.channels.length} channels from URL`, "success");
     } catch (error) {
-      addToast("Failed to load from URL. Check CORS or link validity.", "error");
+      console.error("URL Load Error:", error);
+      addToast("Failed to load. This is likely a CORS issue. Try a different link or upload the file.", "error");
     }
   };
 
@@ -363,50 +370,58 @@ export default function App() {
 
           <div className="flex items-center gap-1.5 md:gap-2">
             <button 
+              id="btn-load-news"
               onClick={() => {
                 setUrlInput('https://iptv-org.github.io/iptv/categories/news.m3u');
                 setShowUrlInput(true);
               }}
               className="btn-secondary !p-2 md:!px-4"
               title="Load News Playlist"
+              aria-label="Load News Playlist"
             >
               <Globe size={18} className="text-blue-500" />
               <span className="hidden lg:inline">News</span>
             </button>
             <button 
+              id="btn-load-iptv-org"
               onClick={() => {
                 setUrlInput('https://iptv-org.github.io/iptv/index.m3u');
                 setShowUrlInput(true);
               }}
               className="btn-secondary !p-2 md:!px-4"
               title="Load iptv-org Playlist"
+              aria-label="Load iptv-org Playlist"
             >
               <Star size={18} className="text-orange-500" />
               <span className="hidden lg:inline">iptv-org</span>
             </button>
             <button 
+              id="btn-add-manual"
               onClick={() => setShowAddChannel(true)}
               className="btn-secondary !p-2 md:!px-4"
               title="Add Channel Manually"
+              aria-label="Add Channel Manually"
             >
               <Plus size={18} />
               <span className="hidden lg:inline">Add</span>
             </button>
             <button 
+              id="btn-toggle-url-input"
               onClick={() => setShowUrlInput(!showUrlInput)}
               className="btn-secondary !p-2 md:!px-4"
               title="Load from URL"
+              aria-label="Load from URL"
             >
               <LinkIcon size={18} />
               <span className="hidden lg:inline">URL</span>
             </button>
-            <label className="btn-primary cursor-pointer !p-2 md:!px-4">
+            <label id="label-upload-m3u" className="btn-primary cursor-pointer !p-2 md:!px-4">
               <Upload size={18} />
               <span className="hidden lg:inline">Upload</span>
-              <input type="file" accept=".m3u" onChange={handleFileUpload} className="hidden" />
+              <input id="input-file-m3u" type="file" accept=".m3u" onChange={handleFileUpload} className="hidden" />
             </label>
             {playlist && (
-              <button onClick={clearPlaylist} className="p-2 text-slate-400 hover:text-red-500 transition-colors">
+              <button id="btn-clear-playlist" onClick={clearPlaylist} className="p-2 text-slate-400 hover:text-red-500 transition-colors" aria-label="Clear Playlist">
                 <Trash2 size={18} />
               </button>
             )}
@@ -416,13 +431,14 @@ export default function App() {
         {showUrlInput && (
           <div className="flex gap-2 animate-fade-in">
             <input 
+              id="input-url-m3u"
               type="text" 
               placeholder="Paste M3U URL here..." 
               className="glass-input flex-1"
               value={urlInput}
               onChange={(e) => setUrlInput(e.target.value)}
             />
-            <button onClick={handleUrlLoad} className="btn-primary">Load</button>
+            <button id="btn-load-url" onClick={handleUrlLoad} className="btn-primary">Load</button>
           </div>
         )}
 
@@ -431,6 +447,7 @@ export default function App() {
           <div className="relative flex-1">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
             <input 
+              id="input-search-channels"
               type="text" 
               placeholder="Search channels..." 
               className="glass-input w-full pl-12"
@@ -438,9 +455,10 @@ export default function App() {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-2 md:pb-0">
+          <div id="container-categories" className="flex gap-2 overflow-x-auto scrollbar-hide pb-2 md:pb-0">
             {categories.map(cat => (
               <button
+                id={`btn-category-${cat.toLowerCase().replace(/\s+/g, '-')}`}
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
                 className={cn(
@@ -546,10 +564,11 @@ export default function App() {
         onClose={() => setShowAddChannel(false)} 
         title="Add New Channel"
       >
-        <form onSubmit={handleAddManualChannel} className="space-y-4">
+        <form id="form-add-channel" onSubmit={handleAddManualChannel} className="space-y-4">
           <div className="space-y-2">
             <label className="text-xs font-bold text-slate-400 uppercase tracking-widest">Channel Name</label>
             <input 
+              id="input-manual-name"
               type="text" 
               placeholder="e.g. BBC One" 
               className="glass-input w-full"
@@ -561,6 +580,7 @@ export default function App() {
           <div className="space-y-2">
             <label className="text-xs font-bold text-slate-400 uppercase tracking-widest">Stream URL (.m3u8)</label>
             <input 
+              id="input-manual-url"
               type="url" 
               placeholder="https://example.com/stream.m3u8" 
               className="glass-input w-full"
@@ -572,6 +592,7 @@ export default function App() {
           <div className="space-y-2">
             <label className="text-xs font-bold text-slate-400 uppercase tracking-widest">Logo URL (Optional)</label>
             <input 
+              id="input-manual-logo"
               type="url" 
               placeholder="https://example.com/logo.png" 
               className="glass-input w-full"
@@ -582,6 +603,7 @@ export default function App() {
           <div className="space-y-2">
             <label className="text-xs font-bold text-slate-400 uppercase tracking-widest">Category</label>
             <input 
+              id="input-manual-category"
               type="text" 
               placeholder="e.g. News, Sports" 
               className="glass-input w-full"
@@ -589,7 +611,7 @@ export default function App() {
               onChange={(e) => setNewChannel({...newChannel, category: e.target.value})}
             />
           </div>
-          <button type="submit" className="btn-primary w-full justify-center mt-4">
+          <button id="btn-submit-channel" type="submit" className="btn-primary w-full justify-center mt-4">
             Add Channel
           </button>
         </form>
