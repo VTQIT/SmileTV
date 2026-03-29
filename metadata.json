@@ -1,0 +1,5 @@
+{
+  "name": "SmileTV - Futuristic IPTV Player",
+  "description": "A high-performance, glassmorphism-styled IPTV web application with HLS support, playlist parsing, and favorites management.",
+  "requestFramePermissions": []
+}
