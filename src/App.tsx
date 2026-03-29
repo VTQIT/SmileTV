@@ -7,6 +7,7 @@ import {
   History, 
   Filter, 
   X, 
+  Maximize,
   Volume2, 
   VolumeX,
   ChevronRight,
@@ -18,6 +19,7 @@ import {
   Plus,
   Globe,
   User,
+  UserCircle,
   LayoutGrid,
   Home
 } from 'lucide-react';
@@ -83,6 +85,7 @@ export default function App() {
   const [showUrlInput, setShowUrlInput] = useState(false);
   const [urlInput, setUrlInput] = useState('');
   const [showAddChannel, setShowAddChannel] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
   const [newChannel, setNewChannel] = useState({
     name: '',
     url: '',
@@ -92,6 +95,7 @@ export default function App() {
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const hlsRef = useRef<Hls | null>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   // --- Initialization ---
   useEffect(() => {
@@ -215,10 +219,11 @@ export default function App() {
     }
   };
 
-  const handleUrlLoad = async () => {
-    if (!urlInput) return;
+  const handleUrlLoad = async (url?: string) => {
+    const targetUrl = typeof url === 'string' ? url : urlInput;
+    if (!targetUrl) return;
     try {
-      const response = await fetch(urlInput);
+      const response = await fetch(targetUrl);
       if (!response.ok) throw new Error("Failed to fetch");
       const content = await response.text();
       const parsed = parseM3U(content);
@@ -388,7 +393,10 @@ export default function App() {
           </div>
 
           <div className="flex items-center gap-4">
-            <button className="p-2 text-slate-400 hover:text-white transition-colors">
+            <button 
+              onClick={() => setShowSettings(true)}
+              className="p-2 text-slate-400 hover:text-white transition-colors"
+            >
               <User size={24} />
             </button>
           </div>
@@ -399,6 +407,7 @@ export default function App() {
           <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-500" size={20} />
           <input 
             id="input-search-channels"
+            ref={searchInputRef}
             type="text" 
             placeholder="Search channels..." 
             className="glass-input w-full pl-14"
@@ -655,26 +664,144 @@ export default function App() {
 
       {/* Bottom Navigation */}
       {!isPlayerOpen && (
-        <nav className="fixed bottom-0 left-0 right-0 z-50 bg-[#0a0a0a] border-t border-white/5 px-6 py-4 flex items-center justify-between md:hidden">
-          <button className="w-12 h-12 flex items-center justify-center rounded-xl nav-item-active">
-            <Home size={24} />
+        <nav className="fixed bottom-0 left-0 right-0 z-50 bg-[#0a0a0a] border-t border-white/5 px-4 py-4 flex items-center justify-between md:hidden">
+          <button 
+            onClick={() => {
+              setSelectedCategory('All');
+              setSearchQuery('');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            className={cn("w-10 h-10 flex items-center justify-center rounded-xl transition-all", (selectedCategory === 'All' && !searchQuery) ? "nav-item-active" : "text-slate-500")}
+          >
+            <Home size={22} />
           </button>
-          <button className="w-12 h-12 flex items-center justify-center text-slate-500 hover:text-white transition-colors">
-            <Heart size={24} />
+          <button 
+            onClick={() => setSelectedCategory('Favorites')}
+            className={cn("w-10 h-10 flex items-center justify-center rounded-xl transition-all", selectedCategory === 'Favorites' ? "nav-item-active" : "text-slate-500")}
+          >
+            <Heart size={22} />
           </button>
-          <button className="w-12 h-12 flex items-center justify-center text-slate-500 hover:text-white transition-colors">
-            <LayoutGrid size={24} />
+          <button 
+            onClick={() => setShowSettings(true)}
+            className="w-10 h-10 flex items-center justify-center text-slate-500 hover:text-white transition-colors"
+          >
+            <LayoutGrid size={22} />
           </button>
-          <button className="w-12 h-12 flex items-center justify-center text-slate-500 hover:text-white transition-colors">
-            <LayoutGrid size={24} className="rotate-90" />
+          <button 
+            onClick={() => setShowSettings(true)}
+            className="w-10 h-10 flex items-center justify-center text-slate-500 hover:text-white transition-colors"
+          >
+            <LayoutGrid size={22} className="rotate-90" />
           </button>
-          <button className="w-12 h-12 flex items-center justify-center text-slate-500 hover:text-white transition-colors">
-            <Search size={24} />
+          <button 
+            onClick={() => {
+              searchInputRef.current?.focus();
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            className={cn("w-10 h-10 flex items-center justify-center rounded-xl transition-all", searchQuery ? "nav-item-active" : "text-slate-500")}
+          >
+            <Search size={22} />
           </button>
-          <button className="w-12 h-12 flex items-center justify-center text-slate-500 hover:text-white transition-colors">
-            <User size={24} />
+          <button 
+            onClick={() => setShowSettings(true)}
+            className="w-10 h-10 flex items-center justify-center text-slate-500 hover:text-white transition-colors"
+          >
+            <UserCircle size={22} />
+          </button>
+          <button 
+            onClick={() => setShowSettings(true)}
+            className="w-10 h-10 flex items-center justify-center text-slate-500 hover:text-white transition-colors"
+          >
+            <User size={22} />
           </button>
         </nav>
+      )}
+
+      {/* Settings Modal */}
+      <Modal 
+        isOpen={showSettings} 
+        onClose={() => setShowSettings(false)} 
+        title="Playlist Settings"
+      >
+        <div className="space-y-6">
+          <div className="space-y-3">
+            <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest">Quick Load</h3>
+            <div className="grid grid-cols-2 gap-2">
+              <button 
+                onClick={() => {
+                  handleUrlLoad('https://iptv-org.github.io/iptv/countries/ph.m3u');
+                  setShowSettings(false);
+                }}
+                className="btn-secondary"
+              >
+                🇵🇭 Philippines
+              </button>
+              <button 
+                onClick={() => {
+                  handleUrlLoad('https://iptv-org.github.io/iptv/categories/news.m3u');
+                  setShowSettings(false);
+                }}
+                className="btn-secondary"
+              >
+                <Globe size={18} className="text-blue-500" /> News
+              </button>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest">Manage Playlist</h3>
+            <div className="flex flex-col gap-2">
+              <label className="btn-primary cursor-pointer w-full">
+                <Upload size={18} /> Upload M3U File
+                <input type="file" accept=".m3u" onChange={(e) => { handleFileUpload(e); setShowSettings(false); }} className="hidden" />
+              </label>
+              <button 
+                onClick={() => {
+                  setShowUrlInput(true);
+                  setShowSettings(false);
+                }}
+                className="btn-secondary w-full"
+              >
+                <LinkIcon size={18} /> Load from URL
+              </button>
+              <button 
+                onClick={() => {
+                  setShowAddChannel(true);
+                  setShowSettings(false);
+                }}
+                className="btn-secondary w-full"
+              >
+                <Plus size={18} /> Add Channel Manually
+              </button>
+              {playlist && (
+                <button 
+                  onClick={() => {
+                    clearPlaylist();
+                    setShowSettings(false);
+                  }}
+                  className="btn-secondary w-full text-red-500 hover:bg-red-500/10"
+                >
+                  <Trash2 size={18} /> Clear Current Playlist
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      </Modal>
+
+      {showUrlInput && (
+        <Modal isOpen={showUrlInput} onClose={() => setShowUrlInput(false)} title="Load from URL">
+          <div className="space-y-4">
+            <input 
+              type="text" 
+              placeholder="Paste M3U URL here..." 
+              className="glass-input w-full"
+              value={urlInput}
+              onChange={(e) => setUrlInput(e.target.value)}
+            />
+            <button onClick={handleUrlLoad} className="btn-primary w-full">Load Playlist</button>
+          </div>
+        </Modal>
       )}
     </div>
   );
