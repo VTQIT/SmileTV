@@ -370,6 +370,19 @@ export default function App() {
 
           <div className="flex items-center gap-1.5 md:gap-2">
             <button 
+              id="btn-load-ph"
+              onClick={() => {
+                setUrlInput('https://iptv-org.github.io/iptv/countries/ph.m3u');
+                setShowUrlInput(true);
+              }}
+              className="btn-secondary !p-2 md:!px-4"
+              title="Load Filipino Playlist"
+              aria-label="Load Filipino Playlist"
+            >
+              <span className="text-lg">🇵🇭</span>
+              <span className="hidden lg:inline ml-1">PH</span>
+            </button>
+            <button 
               id="btn-load-news"
               onClick={() => {
                 setUrlInput('https://iptv-org.github.io/iptv/categories/news.m3u');

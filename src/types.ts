@@ -69,5 +69,21 @@ export const DEMO_CHANNELS: IPTVChannel[] = [
     category: 'News',
     url: 'https://nhkwlive-ojp.akamaized.net/hls/live/2003459/nhkwlive-ojp-en/master.m3u8',
     number: 7
+  },
+  {
+    id: 'iptv-org-ph-1',
+    name: 'UNTV (Philippines)',
+    logo: 'https://upload.wikimedia.org/wikipedia/en/thumb/d/d7/UNTV_Public_Service_logo.png/200px-UNTV_Public_Service_logo.png',
+    category: 'News',
+    url: 'https://untv.vcloud.com.ph/hls/untv/master.m3u8',
+    number: 8
+  },
+  {
+    id: 'iptv-org-ph-2',
+    name: 'Net 25 (Philippines)',
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Net_25_logo.svg/200px-Net_25_logo.svg.png',
+    category: 'General',
+    url: 'https://net25-live.akamaized.net/hls/live/2023153/Net25/master.m3u8',
+    number: 9
   }
 ];
