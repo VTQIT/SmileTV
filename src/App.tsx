@@ -7,7 +7,6 @@ import {
   History, 
   Filter, 
   X, 
-  Maximize, 
   Volume2, 
   VolumeX,
   ChevronRight,
@@ -17,7 +16,10 @@ import {
   Trash2,
   Star,
   Plus,
-  Globe
+  Globe,
+  User,
+  LayoutGrid,
+  Home
 } from 'lucide-react';
 import Hls from 'hls.js';
 import { cn } from './lib/utils';
@@ -359,132 +361,55 @@ export default function App() {
       )}
 
       {/* Header */}
-      <header className="sticky top-0 z-50 glass border-b border-white/10 px-4 py-3 md:px-8 flex flex-col gap-3 md:gap-4">
+      <header className="sticky top-0 z-50 bg-[#050505] px-4 py-6 md:px-8 flex flex-col gap-6">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2 md:gap-3">
-            <div className="w-8 h-8 md:w-10 md:h-10 bg-orange-600 rounded-lg md:rounded-xl flex items-center justify-center shadow-lg shadow-orange-600/30">
-              <Tv className="text-white" size={18} />
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-orange-600 rounded-xl flex items-center justify-center shadow-lg shadow-orange-600/30">
+              <Tv className="text-white" size={20} />
             </div>
-            <h1 className="text-xl md:text-2xl font-bold tracking-tighter text-white">Smile<span className="text-orange-500">TV</span></h1>
+            <div className="flex items-baseline gap-2">
+              <h1 className="text-2xl font-bold tracking-tight text-white">Smile<span className="text-orange-500">TV</span></h1>
+              <span className="text-lg font-medium text-slate-400">PH</span>
+            </div>
           </div>
 
-          <div className="flex items-center gap-1.5 md:gap-2">
-            <button 
-              id="btn-load-ph"
-              onClick={() => {
-                setUrlInput('https://iptv-org.github.io/iptv/countries/ph.m3u');
-                setShowUrlInput(true);
-              }}
-              className="btn-secondary !p-2 md:!px-4"
-              title="Load Filipino Playlist"
-              aria-label="Load Filipino Playlist"
-            >
-              <span className="text-lg">🇵🇭</span>
-              <span className="hidden lg:inline ml-1">PH</span>
+          <div className="flex items-center gap-4">
+            <button className="p-2 text-slate-400 hover:text-white transition-colors">
+              <User size={24} />
             </button>
-            <button 
-              id="btn-load-news"
-              onClick={() => {
-                setUrlInput('https://iptv-org.github.io/iptv/categories/news.m3u');
-                setShowUrlInput(true);
-              }}
-              className="btn-secondary !p-2 md:!px-4"
-              title="Load News Playlist"
-              aria-label="Load News Playlist"
-            >
-              <Globe size={18} className="text-blue-500" />
-              <span className="hidden lg:inline">News</span>
-            </button>
-            <button 
-              id="btn-load-iptv-org"
-              onClick={() => {
-                setUrlInput('https://iptv-org.github.io/iptv/index.m3u');
-                setShowUrlInput(true);
-              }}
-              className="btn-secondary !p-2 md:!px-4"
-              title="Load iptv-org Playlist"
-              aria-label="Load iptv-org Playlist"
-            >
-              <Star size={18} className="text-orange-500" />
-              <span className="hidden lg:inline">iptv-org</span>
-            </button>
-            <button 
-              id="btn-add-manual"
-              onClick={() => setShowAddChannel(true)}
-              className="btn-secondary !p-2 md:!px-4"
-              title="Add Channel Manually"
-              aria-label="Add Channel Manually"
-            >
-              <Plus size={18} />
-              <span className="hidden lg:inline">Add</span>
-            </button>
-            <button 
-              id="btn-toggle-url-input"
-              onClick={() => setShowUrlInput(!showUrlInput)}
-              className="btn-secondary !p-2 md:!px-4"
-              title="Load from URL"
-              aria-label="Load from URL"
-            >
-              <LinkIcon size={18} />
-              <span className="hidden lg:inline">URL</span>
-            </button>
-            <label id="label-upload-m3u" className="btn-primary cursor-pointer !p-2 md:!px-4">
-              <Upload size={18} />
-              <span className="hidden lg:inline">Upload</span>
-              <input id="input-file-m3u" type="file" accept=".m3u" onChange={handleFileUpload} className="hidden" />
-            </label>
-            {playlist && (
-              <button id="btn-clear-playlist" onClick={clearPlaylist} className="p-2 text-slate-400 hover:text-red-500 transition-colors" aria-label="Clear Playlist">
-                <Trash2 size={18} />
-              </button>
-            )}
           </div>
         </div>
 
-        {showUrlInput && (
-          <div className="flex gap-2 animate-fade-in">
-            <input 
-              id="input-url-m3u"
-              type="text" 
-              placeholder="Paste M3U URL here..." 
-              className="glass-input flex-1"
-              value={urlInput}
-              onChange={(e) => setUrlInput(e.target.value)}
-            />
-            <button id="btn-load-url" onClick={handleUrlLoad} className="btn-primary">Load</button>
-          </div>
-        )}
+        {/* Search Bar */}
+        <div className="relative">
+          <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-500" size={20} />
+          <input 
+            id="input-search-channels"
+            type="text" 
+            placeholder="Search channels..." 
+            className="glass-input w-full pl-14"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
 
-        {/* Search & Categories */}
-        <div className="flex flex-col md:flex-row gap-4">
-          <div className="relative flex-1">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-            <input 
-              id="input-search-channels"
-              type="text" 
-              placeholder="Search channels..." 
-              className="glass-input w-full pl-12"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-          <div id="container-categories" className="flex gap-2 overflow-x-auto scrollbar-hide pb-2 md:pb-0">
-            {categories.map(cat => (
-              <button
-                id={`btn-category-${cat.toLowerCase().replace(/\s+/g, '-')}`}
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
-                className={cn(
-                  "px-4 py-2 rounded-xl whitespace-nowrap transition-all font-medium border",
-                  selectedCategory === cat 
-                    ? "bg-orange-600 border-orange-500 text-white shadow-lg shadow-orange-600/20" 
-                    : "glass border-white/10 text-slate-400 hover:text-white hover:border-white/20"
-                )}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
+        {/* Categories */}
+        <div id="container-categories" className="flex gap-3 overflow-x-auto scrollbar-hide">
+          {categories.map(cat => (
+            <button
+              id={`btn-category-${cat.toLowerCase().replace(/\s+/g, '-')}`}
+              key={cat}
+              onClick={() => setSelectedCategory(cat)}
+              className={cn(
+                "px-6 py-2.5 rounded-xl whitespace-nowrap transition-all font-semibold border text-sm",
+                selectedCategory === cat 
+                  ? "category-active" 
+                  : "bg-[#1a1a1a] border-white/5 text-slate-400 hover:text-white"
+              )}
+            >
+              {cat}
+            </button>
+          ))}
         </div>
       </header>
 
@@ -518,44 +443,48 @@ export default function App() {
         )}
 
         {/* Channel Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
           {filteredChannels.map(ch => (
             <div 
               key={ch.id}
               onClick={() => playChannel(ch)}
-              className="glass-card group cursor-pointer relative flex flex-col"
+              className="glass-card group cursor-pointer relative flex flex-col p-4"
             >
-              <div className="absolute top-2 left-2 z-10 bg-black/60 backdrop-blur-md px-2 py-0.5 rounded-md text-[10px] font-bold text-orange-500 border border-white/10">
+              <div className="absolute top-4 left-4 z-10 bg-orange-600 px-2.5 py-1 rounded-lg text-[11px] font-bold text-white shadow-lg shadow-orange-600/20">
                 #{ch.number}
               </div>
               <button 
                 onClick={(e) => toggleFavorite(ch.id, e)}
-                className="absolute top-2 right-2 z-10 p-1.5 rounded-lg glass hover:bg-white/20 transition-all"
+                className="absolute top-4 right-4 z-10 p-1 text-slate-400 hover:text-white transition-colors"
               >
                 <Heart 
-                  size={16} 
-                  className={cn(favorites.includes(ch.id) ? "fill-red-500 text-red-500" : "text-white")} 
+                  size={20} 
+                  className={cn(favorites.includes(ch.id) ? "fill-red-500 text-red-500" : "")} 
                 />
               </button>
               
-              <div className="aspect-video relative overflow-hidden rounded-t-2xl">
+              <div className="flex-1 flex items-center justify-center py-8">
                 <img 
                   src={ch.logo} 
                   alt={ch.name} 
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  className="max-w-[80%] max-h-[100px] object-contain group-hover:scale-110 transition-transform duration-500"
                   referrerPolicy="no-referrer"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40">
-                  <Play className="text-white fill-white" size={32} />
-                </div>
               </div>
               
-              <div className="p-3">
-                <h3 className="font-bold text-sm truncate mb-1 group-hover:text-orange-500 transition-colors">{ch.name}</h3>
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] text-slate-400 uppercase tracking-wider font-semibold truncate max-w-[80%]">{ch.category}</span>
-                  <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+              <div className="mt-auto">
+                <h3 className="font-bold text-base text-white truncate mb-0.5 group-hover:text-orange-500 transition-colors">{ch.name}</h3>
+                <p className="text-xs text-slate-500 truncate mb-3">{ch.category}</p>
+                
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-2 h-2 rounded-full bg-green-500" />
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">1080p</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                    <span className="text-[10px] font-bold text-green-500 uppercase tracking-wider">LIVE</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -710,27 +639,26 @@ export default function App() {
         ))}
       </div>
 
-      {/* Mobile Navigation (Floating) */}
+      {/* Bottom Navigation */}
       {!isPlayerOpen && (
-        <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 glass rounded-2xl border border-white/10 p-2 flex items-center gap-2 shadow-2xl z-40">
-          <button 
-            onClick={() => setSelectedCategory('All')}
-            className={cn("p-3 rounded-xl transition-all", selectedCategory === 'All' ? "bg-orange-600 text-white" : "hover:bg-white/10 text-slate-400")}
-          >
-            <Tv size={20} />
+        <nav className="fixed bottom-0 left-0 right-0 z-50 bg-[#0a0a0a] border-t border-white/5 px-6 py-4 flex items-center justify-between md:hidden">
+          <button className="w-12 h-12 flex items-center justify-center rounded-xl nav-item-active">
+            <Home size={24} />
           </button>
-          <button 
-            onClick={() => setSelectedCategory('Favorites')}
-            className={cn("p-3 rounded-xl transition-all", selectedCategory === 'Favorites' ? "bg-orange-600 text-white" : "hover:bg-white/10 text-slate-400")}
-          >
-            <Heart size={20} />
+          <button className="w-12 h-12 flex items-center justify-center text-slate-500 hover:text-white transition-colors">
+            <Heart size={24} />
           </button>
-          <div className="w-px h-6 bg-white/10 mx-1" />
-          <button 
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="p-3 rounded-xl hover:bg-white/10 text-slate-400 transition-all"
-          >
-            <ChevronRight size={20} className="-rotate-90" />
+          <button className="w-12 h-12 flex items-center justify-center text-slate-500 hover:text-white transition-colors">
+            <LayoutGrid size={24} />
+          </button>
+          <button className="w-12 h-12 flex items-center justify-center text-slate-500 hover:text-white transition-colors">
+            <LayoutGrid size={24} className="rotate-90" />
+          </button>
+          <button className="w-12 h-12 flex items-center justify-center text-slate-500 hover:text-white transition-colors">
+            <Search size={24} />
+          </button>
+          <button className="w-12 h-12 flex items-center justify-center text-slate-500 hover:text-white transition-colors">
+            <User size={24} />
           </button>
         </nav>
       )}
