@@ -16,10 +16,10 @@ export interface PlaylistData {
 export const DEMO_CHANNELS: IPTVChannel[] = [
   {
     id: 'iptv-org-1',
-    name: 'NASA TV',
-    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/NASA_logo.svg/200px-NASA_logo.svg.png',
-    category: 'Science',
-    url: 'https://ntv-public-live.akamaized.net/hls/live/2023153/NASA-Public/master.m3u8',
+    name: 'Sky News (UK)',
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Sky_News_logo_2023.svg/200px-Sky_News_logo_2023.svg.png',
+    category: 'News',
+    url: 'https://skynews-skynews-main-ssai-gb.samsung.wurl.com/manifest/playlist.m3u8',
     number: 1
   },
   {
@@ -48,10 +48,26 @@ export const DEMO_CHANNELS: IPTVChannel[] = [
   },
   {
     id: 'iptv-org-5',
-    name: 'Red Bull TV',
-    logo: 'https://upload.wikimedia.org/wikipedia/en/thumb/f/f5/Red_Bull_TV_logo.svg/200px-Red_Bull_TV_logo.svg.png',
-    category: 'Sports',
-    url: 'https://rbmn-live.akamaized.net/hls/live/590964/boRBmn/master.m3u8',
+    name: 'ABC News (USA)',
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/ABC_News_logo_2021.svg/200px-ABC_News_logo_2021.svg.png',
+    category: 'News',
+    url: 'https://content.uplynk.com/channel/332e8dfefedc4ef08851f5c56f0235c0.m3u8',
     number: 5
+  },
+  {
+    id: 'iptv-org-6',
+    name: 'Bloomberg TV',
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Bloomberg_logo.svg/200px-Bloomberg_logo.svg.png',
+    category: 'News',
+    url: 'https://live-bloomberg-us-east.amagi.tv/index.m3u8',
+    number: 6
+  },
+  {
+    id: 'iptv-org-7',
+    name: 'NHK World (Japan)',
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/NHK_World_logo.svg/200px-NHK_World_logo.svg.png',
+    category: 'News',
+    url: 'https://nhkwlive-ojp.akamaized.net/hls/live/2003459/nhkwlive-ojp-en/master.m3u8',
+    number: 7
   }
 ];

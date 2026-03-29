@@ -16,7 +16,8 @@ import {
   Link as LinkIcon,
   Trash2,
   Star,
-  Plus
+  Plus,
+  Globe
 } from 'lucide-react';
 import Hls from 'hls.js';
 import { cn } from './lib/utils';
@@ -361,6 +362,17 @@ export default function App() {
           </div>
 
           <div className="flex items-center gap-1.5 md:gap-2">
+            <button 
+              onClick={() => {
+                setUrlInput('https://iptv-org.github.io/iptv/categories/news.m3u');
+                setShowUrlInput(true);
+              }}
+              className="btn-secondary !p-2 md:!px-4"
+              title="Load News Playlist"
+            >
+              <Globe size={18} className="text-blue-500" />
+              <span className="hidden lg:inline">News</span>
+            </button>
             <button 
               onClick={() => {
                 setUrlInput('https://iptv-org.github.io/iptv/index.m3u');
