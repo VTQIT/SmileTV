@@ -102,12 +102,26 @@ export default function App() {
     if (savedPlaylist) {
       setPlaylist(JSON.parse(savedPlaylist));
     } else {
-      // Load demo channels if nothing saved
-      setPlaylist({
-        name: 'iptv-org Playlist',
-        channels: DEMO_CHANNELS,
-        categories: Array.from(new Set(DEMO_CHANNELS.map(c => c.category))).sort()
-      });
+      // Auto-load Filipino channels if nothing saved
+      const loadInitialPH = async () => {
+        try {
+          const response = await fetch('https://iptv-org.github.io/iptv/countries/ph.m3u');
+          if (!response.ok) throw new Error("Failed to fetch");
+          const content = await response.text();
+          const parsed = parseM3U(content);
+          setPlaylist(parsed);
+          addToast(`Loaded ${parsed.channels.length} Filipino channels`, "success");
+        } catch (error) {
+          console.error("Initial Load Error:", error);
+          // Fallback to demo channels
+          setPlaylist({
+            name: 'iptv-org Playlist',
+            channels: DEMO_CHANNELS,
+            categories: Array.from(new Set(DEMO_CHANNELS.map(c => c.category))).sort()
+          });
+        }
+      };
+      loadInitialPH();
     }
 
     if (savedFavorites) setFavorites(JSON.parse(savedFavorites));
