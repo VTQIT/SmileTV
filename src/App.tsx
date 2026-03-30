@@ -503,7 +503,7 @@ export default function App() {
                   className="flex-shrink-0 w-40 group"
                 >
                   <div className="relative aspect-video rounded-xl overflow-hidden mb-2 glass border border-white/10 group-hover:border-orange-500/50 transition-all">
-                    <img src={ch.logo} alt={ch.name} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" referrerPolicy="no-referrer" />
+                    <img src={ch.logo || null} alt={ch.name} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" referrerPolicy="no-referrer" />
                     <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                       <Play className="text-white fill-white" size={24} />
                     </div>
@@ -538,7 +538,7 @@ export default function App() {
               
               <div className="flex-1 flex items-center justify-center py-8">
                 <img 
-                  src={ch.logo} 
+                  src={ch.logo || null} 
                   alt={ch.name} 
                   className="max-w-[80%] max-h-[100px] object-contain group-hover:scale-110 transition-transform duration-500"
                   referrerPolicy="no-referrer"
